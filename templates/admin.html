@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+<style>
+    .admin-container {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 2rem;
+    }
+    .admin-sidebar {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        height: fit-content;
+    }
+    .admin-sidebar h3 {
+        color: #667eea;
+        margin-bottom: 1rem;
+    }
+    .admin-sidebar form {
+        margin-bottom: 2rem;
+    }
+    .form-grupo {
+        margin-bottom: 1rem;
+    }
+    .form-grupo label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+    .form-grupo input,
+    .form-grupo textarea {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: inherit;
+    }
+    button {
+        width: 100%;
+        background-color: #667eea;
+        color: white;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #764ba2;
+    }
+    .categorias-list {
+        list-style: none;
+    }
+    .categorias-list li {
+        padding: 0.5rem;
+        background: #f9f9f9;
+        margin-bottom: 0.5rem;
+        border-radius: 4px;
+    }
+    .admin-content h2 {
+        margin-bottom: 1rem;
+        color: #667eea;
+    }
+    .admin-buttons {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    .btn-novo {
+        background-color: #667eea;
+        color: white;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .btn-novo:hover {
+        background-color: #764ba2;
+    }
+    .btn-editar {
+        background-color: #4CAF50;
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+    .btn-deletar {
+        background-color: #f44336;
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .table th {
+        background-color: #667eea;
+        color: white;
+        padding: 1rem;
+        text-align: left;
+    }
+    .table td {
+        padding: 1rem;
+        border-bottom: 1px solid #ddd;
+    }
+    .table tr:hover {
+        background-color: #f9f9f9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-sidebar">
+        <h3>📝 Nova Categoria</h3>
+        <form method="POST" action="{{ url_for('nova_categoria') }}">
+            <div class="form-grupo">
+                <label>Nome da categoria:</label>
+                <input type="text" name="nome" required>
+            </div>
+            <button type="submit">Criar Categoria</button>
+        </form>
+
+        <h3>📂 Categorias</h3>
+        <ul class="categorias-list">
+            {% for categoria in categorias %}
+            <li>{{ categoria.nome }} ({{ categoria.artigos|length }})</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="admin-content">
+        <div class="admin-buttons">
+            <a href="{{ url_for('novo_artigo') }}" class="btn-novo">+ Novo Artigo</a>
+        </div>
+
+        {% if artigos %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Categoria</th>
+                    <th>Data</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for artigo in artigos %}
+                <tr>
+                    <td>{{ artigo.titulo }}</td>
+                    <td>{{ artigo.categoria.nome }}</td>
+                    <td>{{ artigo.data_criacao.strftime('%d/%m/%Y') }}</td>
+                    <td>
+                        <a href="{{ url_for('editar_artigo', id=artigo.id) }}" class="btn-editar">Editar</a>
+                        <a href="{{ url_for('deletar_artigo', id=artigo.id) }}" class="btn-deletar" onclick="return confirm('Tem certeza?')">Deletar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color: #999;">Nenhum artigo criado ainda.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

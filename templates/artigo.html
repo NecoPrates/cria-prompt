@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+<style>
+    .artigo-conteudo {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    .artigo-header {
+        border-bottom: 2px solid #667eea;
+        padding-bottom: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .artigo-header h1 {
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+    .artigo-meta {
+        color: #999;
+        font-size: 0.9rem;
+    }
+    .categoria-badge {
+        display: inline-block;
+        background-color: #764ba2;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        margin-right: 0.5rem;
+    }
+    .artigo-body {
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
+    .comentarios {
+        margin-top: 3rem;
+    }
+    .comentario-item {
+        background: #f9f9f9;
+        padding: 1rem;
+        border-left: 4px solid #667eea;
+        margin-bottom: 1rem;
+        border-radius: 4px;
+    }
+    .comentario-autor {
+        font-weight: bold;
+        color: #667eea;
+    }
+    .comentario-data {
+        font-size: 0.85rem;
+        color: #999;
+    }
+    .form-comentario {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+    .form-grupo {
+        margin-bottom: 1rem;
+    }
+    .form-grupo label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    .form-grupo input,
+    .form-grupo textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: inherit;
+    }
+    .form-grupo textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+    button {
+        background-color: #667eea;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #764ba2;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="artigo-conteudo">
+    <div class="artigo-header">
+        <span class="categoria-badge">{{ artigo.categoria.nome }}</span>
+        <h1>{{ artigo.titulo }}</h1>
+        <div class="artigo-meta">
+            Publicado em {{ artigo.data_criacao.strftime('%d de %B de %Y') }}
+        </div>
+    </div>
+    <div class="artigo-body">
+        {{ artigo.conteudo }}
+    </div>
+</div>
+
+<div class="comentarios">
+    <h2>Comentários ({{ artigo.comentarios|length }})</h2>
+
+    <div class="form-comentario">
+        <h3>Deixe um comentário</h3>
+        <form method="POST" action="{{ url_for('novo_comentario') }}">
+            <input type="hidden" name="artigo_id" value="{{ artigo.id }}">
+            <div class="form-grupo">
+                <label>Seu nome:</label>
+                <input type="text" name="autor" required>
+            </div>
+            <div class="form-grupo">
+                <label>Comentário:</label>
+                <textarea name="conteudo" required></textarea>
+            </div>
+            <button type="submit">Enviar Comentário</button>
+        </form>
+    </div>
+
+    {% if artigo.comentarios %}
+    <div style="margin-top: 2rem;">
+        {% for comentario in artigo.comentarios %}
+        <div class="comentario-item">
+            <div><span class="comentario-autor">{{ comentario.autor }}</span> <span class="comentario-data">{{ comentario.data_criacao.strftime('%d/%m/%Y %H:%M') }}</span></div>
+            <p style="margin-top: 0.5rem;">{{ comentario.conteudo }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p style="color: #999; margin-top: 1rem;">Nenhum comentário ainda. Seja o primeiro!</p>
+    {% endif %}
+</div>
+{% endblock %}

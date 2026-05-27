@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+<style>
+    .form-container {
+        max-width: 700px;
+        margin: 0 auto;
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .form-container h1 {
+        color: #667eea;
+        margin-bottom: 1.5rem;
+    }
+    .form-grupo {
+        margin-bottom: 1.5rem;
+    }
+    .form-grupo label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    .form-grupo input,
+    .form-grupo select,
+    .form-grupo textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: inherit;
+        font-size: 1rem;
+    }
+    .form-grupo textarea {
+        resize: vertical;
+        min-height: 300px;
+    }
+    .form-buttons {
+        display: flex;
+        gap: 1rem;
+    }
+    button {
+        flex: 1;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 1rem;
+    }
+    .btn-submit {
+        background-color: #667eea;
+        color: white;
+    }
+    .btn-submit:hover {
+        background-color: #764ba2;
+    }
+    .btn-cancel {
+        background-color: #ddd;
+        color: #333;
+    }
+    .btn-cancel:hover {
+        background-color: #ccc;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h1>✍️ Novo Artigo</h1>
+    <form method="POST" action="{{ url_for('novo_artigo') }}">
+        <div class="form-grupo">
+            <label>Título:</label>
+            <input type="text" name="titulo" required>
+        </div>
+
+        <div class="form-grupo">
+            <label>Categoria:</label>
+            <select name="categoria_id" required>
+                <option value="">Selecione uma categoria</option>
+                {% for categoria in categorias %}
+                <option value="{{ categoria.id }}">{{ categoria.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-grupo">
+            <label>Conteúdo:</label>
+            <textarea name="conteudo" required></textarea>
+        </div>
+
+        <div class="form-buttons">
+            <button type="submit" class="btn-submit">Publicar Artigo</button>
+            <a href="{{ url_for('admin') }}" class="btn-cancel" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
