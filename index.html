@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cerro Torre · Maestro Prompt Builder</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f7f6f2;--bg3:#f0efe8;
+  --text:#1a1a1a;--text2:#666;--text3:#aaa;
+  --border:rgba(0,0,0,.11);--border2:rgba(0,0,0,.2);
+  --accent:#1a3a2a;--accent-light:#e8f2ec;--accent-text:#1a3a2a;
+  --info-bg:#e8f0fd;--info-text:#1a4fc4;
+  --success-bg:#eaf3de;--success-text:#3b6d11;
+  --danger-text:#a32d2d;
+  --radius:8px;--radius-lg:14px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1c1c1c;--bg2:#252525;--bg3:#2e2e2e;
+    --text:#f0f0f0;--text2:#999;--text3:#555;
+    --border:rgba(255,255,255,.1);--border2:rgba(255,255,255,.2);
+    --accent:#4caf7d;--accent-light:#1a2e22;--accent-text:#4caf7d;
+    --info-bg:#1a2a4a;--info-text:#7eaaff;
+    --success-bg:#173404;--success-text:#97c459;
+    --danger-text:#f09595;
+  }
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--text);min-height:100vh}
+.site-header{background:var(--accent);color:#fff;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
+.site-header .logo{display:flex;align-items:center;gap:10px}
+.site-header .logo-icon{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:18px}
+.site-header .logo-text{font-size:17px;font-weight:500;letter-spacing:.01em}
+.site-header .logo-sub{font-size:11px;opacity:.65;margin-top:1px}
+.header-badge{font-size:11px;padding:4px 12px;border-radius:20px;background:rgba(255,255,255,.15);letter-spacing:.06em;font-weight:500}
+.hero{background:var(--accent-light);border-bottom:0.5px solid var(--border);padding:1.25rem 1.5rem}
+.hero-title{font-size:15px;font-weight:500;color:var(--accent-text);margin-bottom:4px}
+.hero-desc{font-size:13px;color:var(--text2);line-height:1.6;max-width:640px}
+.steps-overview{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.ov-chip{font-size:11px;padding:3px 10px;border-radius:20px;background:var(--bg);border:0.5px solid var(--border);color:var(--text2);font-weight:500}
+.ov-chip span{color:var(--accent-text);font-weight:600;margin-right:3px}
+.container{max-width:1060px;margin:0 auto;padding:1.25rem 1rem}
+.app{display:grid;grid-template-columns:1fr 290px;gap:1rem}
+@media(max-width:680px){.app{grid-template-columns:1fr}}
+.card{background:var(--bg);border-radius:var(--radius-lg);border:0.5px solid var(--border);padding:1.25rem}
+.progress{display:flex;gap:3px;margin-bottom:1rem}
+.prog-seg{height:3px;flex:1;border-radius:2px;background:var(--border);transition:background .3s}
+.prog-seg.done{background:var(--accent)}
+.steps-tabs{display:flex;gap:5px;margin-bottom:1.25rem;flex-wrap:wrap}
+.step-btn{padding:5px 11px;font-size:12px;border-radius:20px;border:0.5px solid var(--border2);background:transparent;cursor:pointer;color:var(--text2);font-family:inherit;transition:all .15s;white-space:nowrap}
+.step-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.step-btn.filled{border-color:var(--success-text);color:var(--success-text)}
+.step-panel{display:none}
+.step-panel.active{display:block}
+.step-header{margin-bottom:1rem;padding-bottom:.75rem;border-bottom:0.5px solid var(--border)}
+.step-letter{font-size:30px;font-weight:600;color:var(--accent);line-height:1}
+.step-name{font-size:14px;font-weight:500;color:var(--text);margin-top:2px}
+.step-question{font-size:12px;color:var(--text3);margin-top:3px;font-style:italic}
+label{display:block;font-size:11px;font-weight:500;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+input,select,textarea{width:100%;padding:8px 10px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--bg);color:var(--text);font-family:inherit;font-size:13.5px;outline:none;transition:border .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical}
+.field{margin-bottom:.85rem}
+.hint{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.5}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.chip{padding:4px 11px;font-size:12px;border:0.5px solid var(--border);border-radius:20px;cursor:pointer;background:transparent;color:var(--text2);font-family:inherit;transition:all .12s}
+.chip:hover{background:var(--bg2);border-color:var(--border2)}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn{padding:8px 18px;font-size:13px;border-radius:var(--radius);cursor:pointer;font-family:inherit;font-weight:500;transition:opacity .15s,transform .1s}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--accent);color:#fff;border:none}
+.btn-primary:hover{opacity:.88}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-secondary{background:transparent;color:var(--text);border:0.5px solid var(--border2)}
+.btn-secondary:hover{background:var(--bg2)}
+.nav-row{display:flex;gap:8px;align-items:center;margin-top:1rem;padding-top:.75rem;border-top:0.5px solid var(--border)}
+.step-lbl{font-size:11px;color:var(--text3);margin-left:auto}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:1rem}
+.s-cell{background:var(--bg2);border-radius:var(--radius);padding:8px 10px}
+.s-cell-label{font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.04em}
+.s-cell-val{font-size:12px;color:var(--text);margin-top:2px;line-height:1.4}
+.result-area{margin-top:1rem;padding-top:1rem;border-top:0.5px solid var(--border);display:none}
+.result-area.show{display:block}
+.result-lbl{font-size:11px;font-weight:500;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.result-box{font-size:13.5px;line-height:1.8;white-space:pre-wrap;padding:14px;border:0.5px solid var(--border);border-radius:var(--radius);background:var(--bg2);color:var(--text);min-height:80px}
+.result-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;align-items:center}
+.status{font-size:12px;margin-top:6px;min-height:16px}
+.status.ok{color:var(--success-text)}
+.status.err{color:var(--danger-text)}
+.cta-box{background:var(--accent-light);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-top:1rem;font-size:13px;color:var(--accent-text);line-height:1.6}
+.cta-box a{color:var(--accent-text);font-weight:500}
+.sidebar-title{font-size:14px;font-weight:500;margin-bottom:.75rem;display:flex;justify-content:space-between;align-items:center}
+.lib-count{font-size:11px;color:var(--text3)}
+.pcard{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);padding:10px;margin-bottom:8px;transition:border .15s}
+.pcard:hover{border-color:var(--border2)}
+.pcard-top{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.pcard-name{font-size:13px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.cat-badge{font-size:10px;padding:2px 7px;border-radius:10px;background:var(--accent-light);color:var(--accent-text);white-space:nowrap;font-weight:500}
+.pcard-preview{font-size:11.5px;color:var(--text2);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.5}
+.pcard-actions{display:flex;gap:5px;margin-top:7px}
+.mini{padding:3px 9px;font-size:11px;border-radius:4px;cursor:pointer;border:0.5px solid var(--border);background:transparent;color:var(--text2);font-family:inherit;transition:all .12s}
+.mini:hover{background:var(--bg2);border-color:var(--border2)}
+.mini.danger:hover{color:var(--danger-text)}
+.empty{text-align:center;padding:2.5rem 1rem;font-size:12.5px;color:var(--text3);line-height:1.7}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;padding:1rem}
+.modal-bg.open{display:flex}
+.modal{background:var(--bg);border-radius:var(--radius-lg);border:0.5px solid var(--border);padding:1.5rem;width:100%;max-width:540px;max-height:85vh;display:flex;flex-direction:column}
+.modal h3{font-size:15px;font-weight:500;margin-bottom:.75rem;color:var(--text)}
+.modal-body{font-size:13px;line-height:1.8;white-space:pre-wrap;overflow-y:auto;border:0.5px solid var(--border);border-radius:var(--radius);padding:12px;background:var(--bg2);flex:1;color:var(--text)}
+.modal-foot{display:flex;gap:6px;margin-top:.75rem;justify-content:flex-end}
+.site-footer{text-align:center;padding:1.5rem;font-size:12px;color:var(--text3);border-top:0.5px solid var(--border);margin-top:1.5rem}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="logo">
+    <div class="logo-icon">⛰️</div>
+    <div>
+      <div class="logo-text">Cerro Torre</div>
+      <div class="logo-sub">Grupo de IA da família</div>
+    </div>
+  </div>
+  <span class="header-badge">M · A · E · S · T · R · O</span>
+</header>
+<div class="hero">
+  <div class="hero-title">Construtor de Prompts — Framework MAESTRO</div>
+  <div class="hero-desc">Preencha os 7 elementos do MAESTRO, copie o prompt pronto e cole no Claude, ChatGPT ou qualquer IA. Seus prompts ficam salvos aqui para reutilizar.</div>
+  <div class="steps-overview">
+    <div class="ov-chip"><span>M</span>Missão</div>
+    <div class="ov-chip"><span>A</span>Ator</div>
+    <div class="ov-chip"><span>E</span>Estilo</div>
+    <div class="ov-chip"><span>S</span>Situação</div>
+    <div class="ov-chip"><span>T</span>Tarefas</div>
+    <div class="ov-chip"><span>R</span>Restrições</div>
+    <div class="ov-chip"><span>O</span>Output</div>
+  </div>
+</div>
+<div class="container">
+<div class="app">
+  <div class="card">
+    <div class="progress" id="progress-bar">
+      <div class="prog-seg" id="p0"></div><div class="prog-seg" id="p1"></div>
+      <div class="prog-seg" id="p2"></div><div class="prog-seg" id="p3"></div>
+      <div class="prog-seg" id="p4"></div><div class="prog-seg" id="p5"></div>
+      <div class="prog-seg" id="p6"></div>
+    </div>
+    <div class="steps-tabs">
+      <button class="step-btn active" onclick="goStep(0)" id="stab0">M — Missão</button>
+      <button class="step-btn" onclick="goStep(1)" id="stab1">A — Ator</button>
+      <button class="step-btn" onclick="goStep(2)" id="stab2">E — Estilo</button>
+      <button class="step-btn" onclick="goStep(3)" id="stab3">S — Situação</button>
+      <button class="step-btn" onclick="goStep(4)" id="stab4">T — Tarefas</button>
+      <button class="step-btn" onclick="goStep(5)" id="stab5">R — Restrições</button>
+      <button class="step-btn" onclick="goStep(6)" id="stab6">O — Output</button>
+    </div>
+    <div class="step-panel active" id="sp0">
+      <div class="step-header"><div class="step-letter">M</div><div class="step-name">Missão</div><div class="step-question">O que você quer alcançar?</div></div>
+      <div class="field"><label>Nome do prompt</label><input type="text" id="f-nome" placeholder="Ex: Email de prospecção B2B" /></div>
+      <div class="field"><label>Categoria</label><select id="f-cat"><option>Conteúdo</option><option>Comunicação</option><option>Análise</option><option>Código</option><option>Estratégia</option><option>Educação</option><option>Carreira</option><option>Outro</option></select></div>
+      <div class="field"><label>Descreva o objetivo principal</label><textarea id="f-missao" rows="3" placeholder="Ex: Convencer meu chefe a aprovar o orçamento do projeto."></textarea><div class="hint">Pense no resultado final, não na tarefa. Ex: "Fazer meu relatório ser lido até o final pelos diretores".</div></div>
+      <div class="chips">
+        <button class="chip" onclick="addChip('f-missao',this)">Convencer stakeholders</button>
+        <button class="chip" onclick="addChip('f-missao',this)">Conseguir uma promoção</button>
+        <button class="chip" onclick="addChip('f-missao',this)">Fazer o cliente responder</button>
+        <button class="chip" onclick="addChip('f-missao',this)">Tornar a apresentação memorável</button>
+        <button class="chip" onclick="addChip('f-missao',this)">Reter um funcionário</button>
+        <button class="chip" onclick="addChip('f-missao',this)">Fazer o currículo passar pelo RH</button>
+        <button class="chip" onclick="addChip('f-missao',this)">Reduzir tempo de reuniões</button>
+        <button class="chip" onclick="addChip('f-missao',this)">Sair de uma reunião com decisão tomada</button>
+      </div>
+    </div>
+    <div class="step-panel" id="sp1">
+      <div class="step-header"><div class="step-letter">A</div><div class="step-name">Ator</div><div class="step-question">Quem a IA deve ser? (persona)</div></div>
+      <div class="field"><label>Persona da IA</label><input type="text" id="f-ator" placeholder="Ex: Consultor de estratégia da McKinsey" /><div class="hint">Quanto mais específica a persona, mais especializada será a resposta.</div></div>
+      <div class="chips">
+        <button class="chip" onclick="setField('f-ator',this)">Consultor McKinsey</button>
+        <button class="chip" onclick="setField('f-ator',this)">Professor universitário</button>
+        <button class="chip" onclick="setField('f-ator',this)">Copywriter de resposta direta</button>
+        <button class="chip" onclick="setField('f-ator',this)">CFO de multinacional</button>
+        <button class="chip" onclick="setField('f-ator',this)">Coach de carreira</button>
+        <button class="chip" onclick="setField('f-ator',this)">Jornalista investigativo</button>
+        <button class="chip" onclick="setField('f-ator',this)">Designer de UX</button>
+        <button class="chip" onclick="setField('f-ator',this)">Advogado corporativo</button>
+        <button class="chip" onclick="setField('f-ator',this)">Mentor de startup</button>
+        <button class="chip" onclick="setField('f-ator',this)">Psicólogo organizacional</button>
+        <button class="chip" onclick="setField('f-ator',this)">Recrutador sênior big tech</button>
+        <button class="chip" onclick="setField('f-ator',this)">Especialista em dados Google</button>
+      </div>
+    </div>
+    <div class="step-panel" id="sp2">
+      <div class="step-header"><div class="step-letter">E</div><div class="step-name">Estilo</div><div class="step-question">Qual tom e nível de profundidade?</div></div>
+      <div class="field"><label>Tom de comunicação</label><select id="f-tom"><option value="">— selecionar —</option><option>Formal</option><option>Informal</option><option>Técnico</option><option>Didático</option><option>Inspirador</option><option>Direto</option><option>Empático</option><option>Provocativo</option><option>Assertivo</option><option>Consultivo</option><option>Storytelling</option></select></div>
+      <div class="field"><label>Instrução de estilo personalizada</label><input type="text" id="f-estilo-custom" placeholder='Ex: "Tom de TED Talk, que motive ação"' /><div class="hint">"Escreva como se fosse um Slack para colega" · "Vá direto ao ponto, sem introduções"</div></div>
+      <div class="field"><label>Nível de profundidade</label><select id="f-nivel"><option value="">— selecionar —</option><option>Básico — iniciante no tema</option><option>Intermediário — algum conhecimento</option><option>Avançado — especialista na área</option><option>Executivo — síntese para decisão rápida</option></select></div>
+    </div>
+    <div class="step-panel" id="sp3">
+      <div class="step-header"><div class="step-letter">S</div><div class="step-name">Situação</div><div class="step-question">Qual o contexto?</div></div>
+      <div class="field"><label>Descreva o contexto relevante</label><textarea id="f-situacao" rows="4" placeholder="Inclua tudo que for relevante: sobre você, a empresa, o decisor, o momento..."></textarea><div class="hint">Quanto mais contexto, melhor a resposta. A IA trabalha com o que você fornece.</div></div>
+      <div class="chips">
+        <button class="chip" onclick="addChip('f-situacao',this)">Sobre mim: [cargo / experiência]</button>
+        <button class="chip" onclick="addChip('f-situacao',this)">Sobre a empresa: [tamanho / setor]</button>
+        <button class="chip" onclick="addChip('f-situacao',this)">Sobre o decisor: [perfil / preferências]</button>
+        <button class="chip" onclick="addChip('f-situacao',this)">Sobre o momento: [urgência / clima]</button>
+        <button class="chip" onclick="addChip('f-situacao',this)">Tentativas anteriores: [o que não funcionou]</button>
+        <button class="chip" onclick="addChip('f-situacao',this)">Sobre o público: [perfil da audiência]</button>
+      </div>
+    </div>
+    <div class="step-panel" id="sp4">
+      <div class="step-header"><div class="step-letter">T</div><div class="step-name">Tarefas</div><div class="step-question">Quais passos específicos?</div></div>
+      <div class="field"><label>Instruções específicas de execução</label><textarea id="f-tarefas" rows="4" placeholder="Ex:&#10;1. Liste os 3 principais riscos&#10;2. Simule as objeções possíveis&#10;3. Sugira uma resposta para cada objeção"></textarea></div>
+      <div class="chips">
+        <button class="chip" onclick="addChip('f-tarefas',this)">Analise os principais riscos</button>
+        <button class="chip" onclick="addChip('f-tarefas',this)">Compare as opções A e B</button>
+        <button class="chip" onclick="addChip('f-tarefas',this)">Ordene por impacto</button>
+        <button class="chip" onclick="addChip('f-tarefas',this)">Simule objeções e respostas</button>
+        <button class="chip" onclick="addChip('f-tarefas',this)">Resuma em 3 bullets</button>
+        <button class="chip" onclick="addChip('f-tarefas',this)">Desenvolva com exemplos concretos</button>
+        <button class="chip" onclick="addChip('f-tarefas',this)">Faça o advogado do diabo</button>
+        <button class="chip" onclick="addChip('f-tarefas',this)">Quebre em etapas semanais</button>
+        <button class="chip" onclick="addChip('f-tarefas',this)">Sugira KPIs para medir</button>
+        <button class="chip" onclick="addChip('f-tarefas',this)">Aponte falhas no meu raciocínio</button>
+      </div>
+    </div>
+    <div class="step-panel" id="sp5">
+      <div class="step-header"><div class="step-letter">R</div><div class="step-name">Restrições</div><div class="step-question">O que evitar? Quais limites?</div></div>
+      <div class="field"><label>Defina as restrições</label><textarea id="f-restricoes" rows="4" placeholder="Ex: Não use jargões técnicos. Máximo 200 palavras. Evite tom agressivo."></textarea></div>
+      <div class="chips">
+        <button class="chip" onclick="addChip('f-restricoes',this)">Sem jargões técnicos</button>
+        <button class="chip" onclick="addChip('f-restricoes',this)">Máximo 200 palavras</button>
+        <button class="chip" onclick="addChip('f-restricoes',this)">Sem introduções longas</button>
+        <button class="chip" onclick="addChip('f-restricoes',this)">Não mencionar concorrentes</button>
+        <button class="chip" onclick="addChip('f-restricoes',this)">Sem clichês ou frases feitas</button>
+        <button class="chip" onclick="addChip('f-restricoes',this)">Sem opiniões pessoais</button>
+        <button class="chip" onclick="addChip('f-restricoes',this)">Não faça suposições — pergunte antes</button>
+        <button class="chip" onclick="addChip('f-restricoes',this)">Reduza ao mínimo viável</button>
+      </div>
+    </div>
+    <div class="step-panel" id="sp6">
+      <div class="step-header"><div class="step-letter">O</div><div class="step-name">Output</div><div class="step-question">Qual formato da entrega?</div></div>
+      <div class="field"><label>Formato de saída</label><select id="f-formato"><option value="">— selecionar —</option><option>Texto corrido</option><option>Lista com marcadores</option><option>Passo a passo numerado</option><option>Tabela comparativa</option><option>Email estruturado</option><option>Roteiro de apresentação</option><option>Código comentado</option><option>JSON estruturado</option><option>3 opções alternativas</option></select></div>
+      <div class="field"><label>Detalhes adicionais do output</label><input type="text" id="f-output-detail" placeholder='Ex: "3 versões: curta, média e longa"' /></div>
+      <div class="field" style="margin-top:.75rem"><label>Resumo — revise antes de montar</label><div class="summary-grid" id="summary-grid"></div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="montarPrompt()"><i class="ti ti-wand"></i> Montar prompt MAESTRO</button>
+        <button class="btn btn-secondary" onclick="limpar()"><i class="ti ti-refresh"></i> Limpar tudo</button>
+      </div>
+      <div class="status" id="gen-status"></div>
+    </div>
+    <div class="result-area" id="result-area">
+      <div class="result-lbl">Seu prompt MAESTRO — pronto para usar</div>
+      <div class="result-box" id="result-box"></div>
+      <div class="result-actions">
+        <button class="btn btn-primary btn-sm" onclick="copyResult()"><i class="ti ti-copy"></i> Copiar prompt</button>
+        <button class="btn btn-secondary btn-sm" onclick="savePrompt()"><i class="ti ti-device-floppy"></i> Salvar na biblioteca</button>
+      </div>
+      <div class="cta-box">
+        <strong>Como usar:</strong> Copie o prompt acima e cole diretamente no <a href="https://claude.ai" target="_blank">Claude.ai</a> ou no ChatGPT. O prompt já está estruturado com todos os 7 elementos do MAESTRO. 🎯
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn btn-secondary btn-sm" onclick="prevStep()" id="btn-prev" style="display:none"><i class="ti ti-arrow-left"></i> Anterior</button>
+      <button class="btn btn-primary btn-sm" onclick="nextStep()" id="btn-next">Próximo <i class="ti ti-arrow-right"></i></button>
+      <span class="step-lbl" id="step-label">1 / 7</span>
+    </div>
+  </div>
+  <div>
+    <div class="card">
+      <div class="sidebar-title">
+        <span><i class="ti ti-database" style="vertical-align:-2px;margin-right:4px"></i>Biblioteca</span>
+        <span class="lib-count" id="lib-count">0 prompts</span>
+      </div>
+      <div class="field"><input type="text" id="lib-search" placeholder="Buscar prompts..." style="font-size:12.5px" oninput="renderLib()" /></div>
+      <div id="lib-list"></div>
+    </div>
+    <div class="card" style="margin-top:1rem;font-size:12.5px;color:var(--text2);line-height:1.7">
+      <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:6px">⛰️ Grupo Cerro Torre</div>
+      Construa seus prompts aqui, copie e use em qualquer IA. Os prompts salvos ficam armazenados neste navegador.
+      <br/><br/>
+      <strong style="color:var(--text)">Dica:</strong> Quanto mais contexto você der na etapa S — Situação, melhor a IA entende o que você precisa.
+    </div>
+  </div>
+</div>
+</div>
+<footer class="site-footer">
+  Cerro Torre · Framework MAESTRO · Comunidade Data Driven &nbsp;·&nbsp; Os prompts são salvos localmente neste navegador.
+</footer>
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h3 id="modal-title"></h3>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-secondary btn-sm" onclick="copyModal()"><i class="ti ti-copy"></i> Copiar</button>
+      <button class="btn btn-secondary btn-sm" onclick="closeModal()">Fechar</button>
+    </div>
+  </div>
+</div>
+<script>
+let curStep=0,prompts=[],builtPrompt='',modalIdx=-1;
+const STEPS=7;
+function load(){try{const d=localStorage.getItem('cerrotorre-prompts');if(d)prompts=JSON.parse(d);}catch(e){}renderLib();}
+function save(){try{localStorage.setItem('cerrotorre-prompts',JSON.stringify(prompts));}catch(e){}}
+function goStep(n){
+  document.getElementById('sp'+curStep).classList.remove('active');
+  document.getElementById('stab'+curStep).classList.remove('active');
+  curStep=n;
+  document.getElementById('sp'+n).classList.add('active');
+  document.getElementById('stab'+n).classList.add('active');
+  updateNav();
+  if(n===6)buildSummary();
+}
+function nextStep(){if(curStep<STEPS-1)goStep(curStep+1);}
+function prevStep(){if(curStep>0)goStep(curStep-1);}
+function updateNav(){
+  document.getElementById('btn-prev').style.display=curStep>0?'':'none';
+  document.getElementById('btn-next').style.display=curStep<STEPS-1?'':'none';
+  document.getElementById('step-label').textContent=(curStep+1)+' / '+STEPS;
+  for(let i=0;i<STEPS;i++)document.getElementById('p'+i).className='prog-seg'+(i<=curStep?' done':'');
+  markFilled();
+}
+function markFilled(){
+  const vals=[v('f-missao'),v('f-ator'),document.getElementById('f-tom').value||v('f-estilo-custom'),v('f-situacao'),v('f-tarefas'),v('f-restricoes'),document.getElementById('f-formato').value||v('f-output-detail')];
+  for(let i=0;i<STEPS;i++){const b=document.getElementById('stab'+i);b.className='step-btn'+(i===curStep?' active':vals[i].trim()?' filled':'');}
+}
+function v(id){return document.getElementById(id).value.trim();}
+function addChip(id,btn){const el=document.getElementById(id);el.value=(el.value?el.value+'\n':'')+btn.textContent.trim();btn.classList.toggle('sel');}
+function setField(id,btn){document.getElementById(id).value=btn.textContent.trim();document.querySelectorAll('#sp1 .chip.sel').forEach(c=>c.classList.remove('sel'));btn.classList.add('sel');}
+function buildSummary(){
+  const f=[{l:'Missão',v:v('f-missao')},{l:'Ator',v:v('f-ator')},{l:'Estilo',v:[document.getElementById('f-tom').value,v('f-estilo-custom')].filter(Boolean).join(' · ')},{l:'Situação',v:v('f-situacao')},{l:'Tarefas',v:v('f-tarefas')},{l:'Restrições',v:v('f-restricoes')},{l:'Output',v:[document.getElementById('f-formato').value,v('f-output-detail')].filter(Boolean).join(' · ')}];
+  document.getElementById('summary-grid').innerHTML=f.map(x=>`<div class="s-cell"><div class="s-cell-label">${x.l}</div><div class="s-cell-val">${x.v||'<span style="opacity:.35">—</span>'}</div></div>`).join('');
+}
+function montarPrompt(){
+  const missao=v('f-missao'),ator=v('f-ator'),tom=document.getElementById('f-tom').value,estiloCustom=v('f-estilo-custom'),nivel=document.getElementById('f-nivel').value,situacao=v('f-situacao'),tarefas=v('f-tarefas'),restricoes=v('f-restricoes'),formato=document.getElementById('f-formato').value,outputDetail=v('f-output-detail');
+  if(!missao&&!ator&&!tarefas){document.getElementById('gen-status').textContent='Preencha ao menos Missão, Ator ou Tarefas.';document.getElementById('gen-status').className='status err';return;}
+  const parts=[];
+  if(ator)parts.push(`Você é ${ator}.`);
+  if(missao)parts.push(`\nMissão: ${missao}`);
+  const estilo=[tom,estiloCustom,nivel].filter(Boolean).join(' | ');
+  if(estilo)parts.push(`\nEstilo: ${estilo}`);
+  if(situacao)parts.push(`\nContexto / Situação:\n${situacao}`);
+  if(tarefas)parts.push(`\nTarefas:\n${tarefas}`);
+  if(restricoes)parts.push(`\nRestrições:\n${restricoes}`);
+  const out=[formato,outputDetail].filter(Boolean).join(' — ');
+  if(out)parts.push(`\nFormato de entrega: ${out}`);
+  builtPrompt=parts.join('\n').trim();
+  document.getElementById('result-box').textContent=builtPrompt;
+  document.getElementById('result-area').className='result-area show';
+  document.getElementById('gen-status').textContent='✓ Prompt montado! Copie e cole na IA de sua escolha.';
+  document.getElementById('gen-status').className='status ok';
+}
+function copyResult(){if(builtPrompt){navigator.clipboard.writeText(builtPrompt);document.getElementById('gen-status').textContent='✓ Copiado!';document.getElementById('gen-status').className='status ok';}}
+function savePrompt(){if(!builtPrompt)return;const name=v('f-nome')||'Sem título';prompts.unshift({name,cat:document.getElementById('f-cat').value,prompt:builtPrompt,date:new Date().toLocaleDateString('pt-BR')});save();renderLib();document.getElementById('gen-status').textContent='✓ Salvo na biblioteca!';document.getElementById('gen-status').className='status ok';}
+function limpar(){if(!confirm('Limpar todos os campos?'))return;['f-nome','f-missao','f-ator','f-estilo-custom','f-situacao','f-tarefas','f-restricoes','f-output-detail'].forEach(id=>document.getElementById(id).value='');['f-cat','f-tom','f-nivel','f-formato'].forEach(id=>document.getElementById(id).selectedIndex=0);document.querySelectorAll('.chip.sel').forEach(c=>c.classList.remove('sel'));document.getElementById('result-area').className='result-area';document.getElementById('gen-status').textContent='';builtPrompt='';goStep(0);}
+function renderLib(){const q=(document.getElementById('lib-search').value||'').toLowerCase();const f=prompts.filter(p=>p.name.toLowerCase().includes(q)||p.prompt.toLowerCase().includes(q));document.getElementById('lib-count').textContent=prompts.length+' prompt'+(prompts.length!==1?'s':'');const el=document.getElementById('lib-list');if(!f.length){el.innerHTML='<div class="empty">'+(prompts.length===0?'<i class="ti ti-bookmark" style="font-size:22px;display:block;margin-bottom:6px;opacity:.4"></i>Nenhum prompt salvo ainda.<br/>Monte seu primeiro e salve!':'Nenhum resultado.')+'</div>';return;}el.innerHTML=f.map(p=>{const i=prompts.indexOf(p);return`<div class="pcard"><div class="pcard-top"><span class="pcard-name">${p.name}</span><span class="cat-badge">${p.cat}</span></div><div class="pcard-preview">${p.prompt}</div><div class="pcard-actions"><button class="mini" onclick="viewP(${i})"><i class="ti ti-eye" style="font-size:11px"></i> Ver</button><button class="mini" onclick="copyP(${i})"><i class="ti ti-copy" style="font-size:11px"></i> Copiar</button><button class="mini danger" onclick="delP(${i})"><i class="ti ti-trash" style="font-size:11px"></i></button></div></div>`;}).join('');}
+function viewP(i){modalIdx=i;document.getElementById('modal-title').textContent=prompts[i].name;document.getElementById('modal-body').textContent=prompts[i].prompt;document.getElementById('modal').className='modal-bg open';}
+function closeModal(){document.getElementById('modal').className='modal-bg';}
+function copyModal(){if(modalIdx>=0)navigator.clipboard.writeText(prompts[modalIdx].prompt);}
+function copyP(i){navigator.clipboard.writeText(prompts[i].prompt);document.getElementById('gen-status').textContent='✓ Copiado!';document.getElementById('gen-status').className='status ok';}
+function delP(i){if(!confirm('Remover "'+prompts[i].name+'"?'))return;prompts.splice(i,1);save();renderLib();}
+updateNav();load();
+</script>
+</body>
+</html>
